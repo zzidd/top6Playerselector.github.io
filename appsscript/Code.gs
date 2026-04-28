@@ -32,6 +32,14 @@ function handleRequest_(e, method) {
       return jsonOutput_(submitSelection_(payload));
     }
 
+    if (action === 'transformmatch') {
+      const matchId = String((e.parameter && e.parameter.matchId) || '').trim();
+      if (!matchId) {
+        return jsonOutput_({ error: "matchId parameter is required" });
+      }
+      return jsonOutput_(getTransformedMatchData(matchId));
+    }
+
     return jsonOutput_({ ok: false, message: 'Unknown action.' });
   } catch (error) {
     return jsonOutput_({ ok: false, message: error.message || 'Unexpected error.' });
@@ -306,4 +314,72 @@ function submitSelection_(payload) {
     matchId: payload.matchId,
     state: liveMatch.state
   };
+}
+
+function getTransformedMatchData(matchId) {
+  const sheet = getSheet_();
+  const lastRow = sheet.getLastRow();
+  
+  if (lastRow < 2) {
+    return { error: "No data found in Selections sheet" };
+  }
+  
+  // Read all data: A through O columns (15 columns total)
+  const rows = sheet.getRange(2, 1, lastRow - 1, 15).getValues();
+  
+  const matchData = {
+    matchId: matchId,
+    team1: "",
+    team2: "",
+    state: "",
+    status: "",
+    submittedAt: "",
+    users: []
+  };
+  
+  let hasData = false;
+  
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const rowMatchId = String(row[3]); // Column D: matchId
+    
+    if (rowMatchId === String(matchId)) {
+      if (!hasData) {
+        // Set match details from first occurrence
+        matchData.team1 = String(row[5]); // Column F: team1
+        matchData.team2 = String(row[6]); // Column G: team2  
+        matchData.state = String(row[7]); // Column H: state
+        matchData.status = String(row[7]); // Status same as state
+        matchData.submittedAt = String(row[0]); // Column A: timestamp
+        hasData = true;
+      }
+      
+      let selectedIds = [];
+      try {
+        // Parse selectedPlayersJson from Column K
+        const selectedPlayersJson = row[10]; // Column K: selectedPlayersJson
+        if (selectedPlayersJson && selectedPlayersJson.trim()) {
+          const players = JSON.parse(selectedPlayersJson);
+          selectedIds = players.map(player => String(player.id));
+        }
+      } catch (e) {
+        Logger.log(`Invalid JSON in row ${i + 2}: ${e.message}`);
+        continue;
+      }
+      
+      // Add user data using normalizedName column
+      matchData.users.push({
+        user: String(row[2]), // Column C: normalizedName
+        selectedIds: selectedIds,
+        starId: String(row[11]), // Column L: starPlayerId
+        momId: String(row[13])   // Column N: momPlayerId
+      });
+    }
+  }
+  
+  if (!hasData) {
+    return { error: `No data found for matchId: ${matchId}` };
+  }
+  
+  return matchData;
 }

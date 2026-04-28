@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top 6 Player Selector</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card form-card">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Top 6 Fantasy</p>
+          <h1>Enter your name and move straight into match selection.</h1>
+          <p class="subtitle">This lightweight selector keeps the current player rules, stores your latest team, and locks the form as soon as the match is in progress, live, or complete.</p>
+        </div>
+      </div>
+
+      <form id="name-form" class="form-grid">
+        <label for="user-name">Your name</label>
+        <input id="user-name" class="input" type="text" placeholder="Enter your name" autocomplete="name" required>
+        <div class="page-actions">
+          <button class="brand-button" type="submit">Continue to matches</button>
+        </div>
+      </form>
+    </section>
+
+    <p class="footer-note">Hosted as a static GitHub Pages site.</p>
+  </main>
+
+  <script src="./config.js?v=3"></script>
+  <script src="./app.js?v=3"></script>
+</body>
+</html>

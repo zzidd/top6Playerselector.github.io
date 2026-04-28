@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Team | Top 6 Player Selector</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="selection-page">
+  <main class="page-shell">
+    <section class="hero-card">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Player Selection</p>
+          <h1 id="match-title">Loading match...</h1>
+          <p id="match-desc" class="subtitle">Fetching live state and your squad pool.</p>
+        </div>
+        <div class="user-card">
+          <div>
+            <p class="eyebrow">Playing as</p>
+            <strong id="selected-user-name"></strong>
+          </div>
+          <div class="page-actions">
+            <a class="secondary-button" href="./matches.html">Back to matches</a>
+            <a class="ghost-button" href="./index.html">Change name</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-badges">
+        <span id="match-state" class="status-pill">loading</span>
+        <span class="meta-pill">Exactly 6 players</span>
+        <span class="meta-pill">1 Star + 1 MoM</span>
+        <span class="meta-pill">Later submit replaces earlier submit</span>
+      </div>
+    </section>
+
+    <div id="selection-message" class="message hidden"></div>
+
+    <section id="lock-banner" class="lock-banner hidden">
+      <div class="lock-topline">
+        <div>
+          <h2 class="lock-title">Selection is locked</h2>
+          <p id="lock-text" class="subtitle"></p>
+        </div>
+      </div>
+    </section>
+
+    <div id="selection-root" class="section-stack">
+      <section class="stats-grid">
+        <article class="stat-card">
+          <div id="selection-count" class="stat-number">0 / 6</div>
+          <div class="stat-label">Selected</div>
+        </article>
+        <article class="stat-card">
+          <div id="batters-count" class="stat-number">0</div>
+          <div class="stat-label">Batters</div>
+        </article>
+        <article class="stat-card">
+          <div id="bowlers-count" class="stat-number">0</div>
+          <div class="stat-label">Bowlers</div>
+        </article>
+        <article class="stat-card">
+          <div id="allrounders-count" class="stat-number">0</div>
+          <div class="stat-label">All Rounders</div>
+        </article>
+        <article class="stat-card">
+          <div id="keepers-count" class="stat-number">0</div>
+          <div class="stat-label">Wicket Keepers</div>
+        </article>
+      </section>
+
+      <section class="selected-strip">
+        <div class="match-header">
+          <div>
+            <p class="eyebrow">Chosen team</p>
+            <p id="submit-helper" class="subtitle"></p>
+          </div>
+          <button id="submit-selection" class="brand-button" type="button">Submit team</button>
+        </div>
+        <div id="selected-chip-row" class="chip-row"></div>
+      </section>
+
+      <section class="panel">
+        <div class="match-toolbar">
+          <input id="player-search" class="search-input" type="search" placeholder="Search players by name">
+          <select id="team-filter" class="select-input">
+            <option value="all">All teams</option>
+          </select>
+        </div>
+        <div id="role-filters" class="role-filters" style="margin-top: 14px;">
+          <button class="filter-pill active" type="button" data-role-filter="all">All Roles</button>
+          <button class="filter-pill" type="button" data-role-filter="Batter">Batters</button>
+          <button class="filter-pill" type="button" data-role-filter="Bowler">Bowlers</button>
+          <button class="filter-pill" type="button" data-role-filter="All_Rounder">All Rounders</button>
+          <button class="filter-pill" type="button" data-role-filter="WK">Wicket Keepers</button>
+        </div>
+      </section>
+
+      <section id="role-grid" class="role-grid"></section>
+    </div>
+  </main>
+
+  <div id="submit-modal" class="submit-modal hidden" aria-hidden="true">
+    <div class="submit-modal-backdrop" data-close-submit-modal></div>
+    <div class="submit-modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-modal-title">
+      <button id="submit-modal-close" class="submit-modal-close hidden" type="button" aria-label="Close">x</button>
+      <div id="submit-modal-spinner" class="submit-modal-spinner"></div>
+      <div id="submit-modal-check" class="submit-modal-check hidden">&#10003;</div>
+      <h2 id="submit-modal-title">Submitting...</h2>
+      <p id="submit-modal-text" class="subtitle">Saving your team, please wait.</p>
+    </div>
+  </div>
+
+
+  <script src="./config.js?v=3"></script>
+  <script src="./app.js?v=3"></script>
+</body>
+</html>
+
+

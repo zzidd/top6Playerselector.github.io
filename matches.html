@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Match | Top 6 Player Selector</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Match Selection</p>
+          <h1>Pick the fixture, then build your six-player team.</h1>
+          <p class="subtitle">Once a match starts, your submitted team stays visible but the selector locks.</p>
+        </div>
+        <div class="user-card">
+          <div>
+            <p class="eyebrow">Playing as</p>
+            <strong id="current-user-name"></strong>
+          </div>
+          <a class="secondary-button" href="./index.html">Change name</a>
+        </div>
+      </div>
+
+      <div class="match-toolbar">
+        <input id="match-search" class="search-input" type="search" placeholder="Search by team or match description">
+        <select id="match-filter" class="select-input">
+          <option value="all">All matches</option>
+          <option value="upcoming">Open for selection</option>
+          <option value="locked">Locked matches</option>
+          <option value="complete">Completed only</option>
+        </select>
+      </div>
+    </section>
+
+    <div id="matches-message" class="message hidden"></div>
+    <section id="match-list" class="match-grid section-stack"></section>
+  </main>
+
+  <script src="./config.js?v=3"></script>
+  <script src="./app.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "matches": [
+    {
+      "matchId": "local-001",
+      "team1": "Chennai Super Kings",
+      "team2": "Royal Challengers Bengaluru",
+      "matchDesc": "Test Match 1",
+      "state": "upcoming",
+      "status": "Open for local testing"
+    },
+    {
+      "matchId": "local-002",
+      "team1": "Mumbai Indians",
+      "team2": "Kolkata Knight Riders",
+      "matchDesc": "Test Match 2",
+      "state": "in progress",
+      "status": "Locked test fixture"
+    }
+  ]
+}

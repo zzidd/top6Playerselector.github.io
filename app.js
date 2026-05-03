@@ -463,18 +463,22 @@
       momId: "",
       locked: false,
       searchQuery: "",
-      roleFilter: "all",
+      roleFilter: "Batter",
       teamFilter: "all"
     };
 
     const messageNode = $("selection-message");
-    const roleFilterWrap = $("role-filters");
+    const roleTabWrap = $("role-tabs");
     const teamFilterSelect = $("team-filter");
     const searchInput = $("player-search");
     const submitButton = $("submit-selection");
     const lockBanner = $("lock-banner");
     const lockText = $("lock-text");
     const submitModalClose = $("submit-modal-close");
+    const themeToggle = $("theme-toggle");
+    const cricketField = $("cricket-field");
+    
+    let isDarkMode = false;
 
     if (submitModalClose) {
       submitModalClose.addEventListener("click", closeSubmitModal);
@@ -520,22 +524,7 @@
       $("allrounders-count").textContent = composition.allRounders;
       $("keepers-count").textContent = composition.keepers;
 
-      const chipRow = $("selected-chip-row");
-      if (!state.selected.length) {
-        chipRow.innerHTML = '<span class="helper-text">Pick six players, then choose one Star and one MoM.</span>';
-      } else {
-        chipRow.innerHTML = state.selected.map((player) => {
-          const pid = String(player.id);
-          const marker = state.starId === pid && state.momId === pid ? "S+M" : state.starId === pid ? "S" : state.momId === pid ? "M" : "remove";
-          return `<button class="chip" type="button" data-remove-id="${escapeHtml(pid)}">${escapeHtml(player.name)} <span>${escapeHtml(marker)}</span></button>`;
-        }).join("");
-        chipRow.querySelectorAll("[data-remove-id]").forEach((button) => {
-          button.addEventListener("click", () => {
-            if (state.locked) return;
-            togglePlayer(button.getAttribute("data-remove-id"));
-          });
-        });
-      }
+      renderCricketField();
 
       submitButton.disabled = state.locked || !canSubmit();
       $("submit-helper").textContent = state.locked
@@ -544,50 +533,120 @@
           ? "Ready to submit. A later submission replaces your earlier one until lock."
           : "Select exactly 6 players and choose both Star and MoM.";
     }
+    
+    
+    function renderCricketField() {
+      cricketField.classList.remove("hidden");
+      
+      // Clear all slots
+      const slots = cricketField.querySelectorAll(".player-slot");
+      slots.forEach(slot => {
+        slot.innerHTML = "";
+        slot.classList.remove("occupied", "star", "mom");
+      });
+      
+      // Sort players by role order: Batter → Bowler → All-rounder → WK
+      const roleOrder = ['Batter', 'Bowler', 'All_Rounder', 'WK'];
+      const sortedPlayers = [...state.selected].sort((a, b) => {
+        const aRoleIndex = roleOrder.indexOf(a.role);
+        const bRoleIndex = roleOrder.indexOf(b.role);
+        if (aRoleIndex !== bRoleIndex) {
+          return aRoleIndex - bRoleIndex;
+        }
+        // Within same role, maintain original order
+        return state.selected.indexOf(a) - state.selected.indexOf(b);
+      });
+      
+      // Fill slots 1-6 with sorted players
+      sortedPlayers.forEach((player, index) => {
+        if (index >= 6) return; // Only fill first 6 slots
+        
+        const pid = String(player.id);
+        const slotElement = cricketField.querySelector(`.slot-${index + 1}`);
+        
+        if (slotElement) {
+          const isStar = state.starId === pid;
+          const isMom = state.momId === pid;
+          
+          slotElement.classList.add("occupied");
+          if (isStar) slotElement.classList.add("star");
+          if (isMom) slotElement.classList.add("mom");
+          
+          let badges = "";
+          if (isStar && isMom) {
+            badges = `<div class="player-badges"><span class="badge-star">★</span><span class="badge-mom">M</span></div>`;
+          } else if (isStar) {
+            badges = `<div class="player-badges"><span class="badge-star">★</span></div>`;
+          } else if (isMom) {
+            badges = `<div class="player-badges"><span class="badge-mom">M</span></div>`;
+          }
+          
+          const roleLabel = player.role.replace("_", " ");
+          slotElement.innerHTML = `
+            <div class="player-name-field">${escapeHtml(player.name)}</div>
+            <div class="player-team-field">${escapeHtml(player.team)}</div>
+            <div class="player-role-field">${escapeHtml(roleLabel)}</div>
+            ${badges}
+            <button class="slot-remove" data-remove-id="${escapeHtml(pid)}" aria-label="Remove player">×</button>
+          `;
+        }
+      });
+      
+      // Add remove functionality to slots
+      cricketField.querySelectorAll("[data-remove-id]").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (state.locked) return;
+          togglePlayer(button.getAttribute("data-remove-id"));
+        });
+      });
+    }
 
     function renderPlayerColumns() {
       const disabledRoles = getDisabledRoles(state.selected);
       const grouped = groupByRole(state.filteredPlayers);
-      const columns = ROLE_ORDER.map((role) => {
-        const cards = grouped[role].map((player) => {
-          const pid = String(player.id);
-          const selected = isSelected(pid);
-          const disabled = !selected && (state.locked || disabledRoles.has(player.role));
-          const starActive = state.starId === pid;
-          const momActive = state.momId === pid;
-
-          return `
-            <div class="player-card">
-              <div class="player-topline">
-                <div>
-                  <div class="player-name">${escapeHtml(player.name)}</div>
-                  <div class="player-meta">${escapeHtml(player.team)}</div>
-                </div>
-                <span class="small-pill">${escapeHtml(player.role.replace("_", " "))}</span>
-              </div>
-              <button class="player-toggle ${selected ? "selected" : ""}" type="button" data-player-id="${escapeHtml(pid)}" ${disabled ? "disabled" : ""}>
-                ${selected ? "Selected" : "Add to team"}
-              </button>
-              ${selected ? `
-                <div class="special-row">
-                  <button class="special-button ${starActive ? "active" : ""}" type="button" data-star-id="${escapeHtml(pid)}" ${state.locked ? "disabled" : ""}>Star</button>
-                  <button class="special-button ${momActive ? "active" : ""}" type="button" data-mom-id="${escapeHtml(pid)}" ${state.locked ? "disabled" : ""}>MoM</button>
-                </div>
-              ` : ""}
-            </div>
-          `;
-        }).join("");
+      const activeRole = state.roleFilter;
+      
+      // Only show the active role column
+      const players = grouped[activeRole] || [];
+      const cards = players.map((player) => {
+        const pid = String(player.id);
+        const selected = isSelected(pid);
+        const disabled = !selected && (state.locked || disabledRoles.has(player.role));
+        const starActive = state.starId === pid;
+        const momActive = state.momId === pid;
 
         return `
-          <section class="role-column">
-            <div class="role-header">${ROLE_LABELS[role]}</div>
-            <div class="player-list">${cards || '<div class="empty-state">No players in this filter.</div>'}</div>
-          </section>
+          <div class="player-card">
+            <div class="player-topline">
+              <div>
+                <div class="player-name">${escapeHtml(player.name)}</div>
+                <div class="player-meta">${escapeHtml(player.team)}</div>
+              </div>
+              <span class="small-pill">${escapeHtml(player.role.replace("_", " "))}</span>
+            </div>
+            <button class="player-toggle ${selected ? "selected" : ""}" type="button" data-player-id="${escapeHtml(pid)}" ${disabled ? "disabled" : ""}>
+              ${selected ? "Selected" : "Add to team"}
+            </button>
+            ${selected ? `
+              <div class="special-row">
+                <button class="special-button ${starActive ? "active" : ""}" type="button" data-star-id="${escapeHtml(pid)}" ${state.locked ? "disabled" : ""}>Star</button>
+                <button class="special-button ${momActive ? "active" : ""}" type="button" data-mom-id="${escapeHtml(pid)}" ${state.locked ? "disabled" : ""}>MoM</button>
+              </div>
+            ` : ""}
+          </div>
         `;
       }).join("");
 
+      const column = `
+        <section class="role-column">
+          <div class="role-header">${ROLE_LABELS[activeRole]}</div>
+          <div class="player-list">${cards || '<div class="empty-state">No players in this role.</div>'}</div>
+        </section>
+      `;
+
       const grid = $("role-grid");
-      grid.innerHTML = columns;
+      grid.innerHTML = column;
 
       grid.querySelectorAll("[data-player-id]").forEach((button) => {
         button.addEventListener("click", () => togglePlayer(button.getAttribute("data-player-id")));
@@ -600,20 +659,55 @@
       });
     }
 
+    function getPlayerRole(playerId) {
+      const player = state.players.find(p => String(p.id) === String(playerId));
+      return player ? player.role : null;
+    }
+
+    function switchToRoleTab(role) {
+      const tabButton = roleTabWrap.querySelector(`[data-role-tab="${role}"]`);
+      if (tabButton) {
+        roleTabWrap.querySelectorAll("[data-role-tab]").forEach(node => node.classList.remove("active"));
+        tabButton.classList.add("active");
+        state.roleFilter = role;
+        applyFilters();
+      }
+    }
+
     function applyFilters() {
       let filtered = [...state.players];
 
+      // Universal search: Apply name search to ALL players first
       if (state.searchQuery) {
         const needle = state.searchQuery.toLowerCase();
         filtered = filtered.filter((player) => player.name.toLowerCase().includes(needle));
+        
+        // Auto-switch to tab if search results contain players from different role
+        if (filtered.length > 0) {
+          const foundRoles = [...new Set(filtered.map(p => p.role))];
+          const currentRole = state.roleFilter;
+          
+          // If current tab has no results but other roles do, switch to first available
+          if (!filtered.some(p => p.role === currentRole) && foundRoles.length > 0) {
+            const roleOrder = ['Batter', 'Bowler', 'All_Rounder', 'WK'];
+            for (const role of roleOrder) {
+              if (foundRoles.includes(role)) {
+                switchToRoleTab(role);
+                break;
+              }
+            }
+          }
+        }
       }
 
-      if (state.roleFilter !== "all") {
-        filtered = filtered.filter((player) => player.role === state.roleFilter);
-      }
-
+      // Apply team filter next (affects all roles)
       if (state.teamFilter !== "all") {
         filtered = filtered.filter((player) => player.team === state.teamFilter);
+      }
+
+      // Apply role filter LAST (only for display in role tabs)
+      if (state.roleFilter !== "all") {
+        filtered = filtered.filter((player) => player.role === state.roleFilter);
       }
 
       state.filteredPlayers = filtered;
@@ -711,11 +805,11 @@
       applyFilters();
     });
 
-    roleFilterWrap.querySelectorAll("[data-role-filter]").forEach((button) => {
+    roleTabWrap.querySelectorAll("[data-role-tab]").forEach((button) => {
       button.addEventListener("click", () => {
-        roleFilterWrap.querySelectorAll("[data-role-filter]").forEach((node) => node.classList.remove("active"));
+        roleTabWrap.querySelectorAll("[data-role-tab]").forEach((node) => node.classList.remove("active"));
         button.classList.add("active");
-        state.roleFilter = button.getAttribute("data-role-filter");
+        state.roleFilter = button.getAttribute("data-role-tab");
         applyFilters();
       });
     });
@@ -724,6 +818,77 @@
       state.teamFilter = event.target.value;
       applyFilters();
     });
+    
+    
+    // Initialize dark mode
+    function initDarkMode() {
+      const savedTheme = localStorage.getItem('top6_theme') || 'light';
+      isDarkMode = savedTheme === 'dark';
+      updateTheme();
+    }
+    
+    function updateTheme() {
+      if (isDarkMode) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-label', 'Toggle light mode');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-label', 'Toggle dark mode');
+      }
+      localStorage.setItem('top6_theme', isDarkMode ? 'dark' : 'light');
+    }
+    
+    themeToggle.addEventListener("click", () => {
+      isDarkMode = !isDarkMode;
+      updateTheme();
+    });
+    
+    initDarkMode();
+
+    // Add swipe gesture support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    const roleGrid = $("role-grid");
+    
+    roleGrid.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    roleGrid.addEventListener("touchend", (event) => {
+      touchEndX = event.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) < swipeThreshold) return;
+      
+      const currentRoleIndex = ROLE_ORDER.indexOf(state.roleFilter);
+      let newIndex;
+      
+      if (diff > 0) {
+        // Swipe left - go to next tab
+        newIndex = (currentRoleIndex + 1) % ROLE_ORDER.length;
+      } else {
+        // Swipe right - go to previous tab
+        newIndex = currentRoleIndex === 0 ? ROLE_ORDER.length - 1 : currentRoleIndex - 1;
+      }
+      
+      const newRole = ROLE_ORDER[newIndex];
+      const newTab = roleTabWrap.querySelector(`[data-role-tab="${newRole}"]`);
+      
+      if (newTab) {
+        roleTabWrap.querySelectorAll("[data-role-tab]").forEach((node) => node.classList.remove("active"));
+        newTab.classList.add("active");
+        state.roleFilter = newRole;
+        applyFilters();
+      }
+    }
 
     submitButton.addEventListener("click", async () => {
       if (state.locked || !canSubmit()) return;

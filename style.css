@@ -15,6 +15,22 @@
   --radius: 24px;
 }
 
+[data-theme="dark"] {
+  --bg: #1a1f2e;
+  --surface: rgba(30, 35, 48, 0.88);
+  --surface-strong: #2d3748;
+  --text: #e2e8f0;
+  --muted: #a0aec0;
+  --line: rgba(255, 255, 255, 0.12);
+  --brand: #10b981;
+  --brand-strong: #059669;
+  --brand-soft: rgba(16, 185, 129, 0.12);
+  --gold: #f59e0b;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -28,6 +44,13 @@ body {
     radial-gradient(circle at top left, rgba(215, 164, 65, 0.18), transparent 30%),
     radial-gradient(circle at top right, rgba(15, 123, 108, 0.16), transparent 28%),
     linear-gradient(180deg, #f9f4e9 0%, #f3eee3 100%);
+}
+
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.15), transparent 30%),
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 28%),
+    linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 }
 
 a {
@@ -142,6 +165,16 @@ button {
   background: rgba(255, 255, 255, 0.7);
 }
 
+[data-theme="dark"] .badge,
+[data-theme="dark"] .filter-pill,
+[data-theme="dark"] .small-pill,
+[data-theme="dark"] .status-pill,
+[data-theme="dark"] .special-tag,
+[data-theme="dark"] .meta-pill {
+  background: rgba(30, 35, 48, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .meta-pill {
   color: var(--muted);
 }
@@ -177,10 +210,21 @@ button {
   border: 1px solid var(--line);
 }
 
+[data-theme="dark"] .secondary-button {
+  background: var(--surface-strong);
+  color: var(--text);
+  border-color: var(--line);
+}
+
 .ghost-button {
   background: transparent;
   color: var(--muted);
   border: 1px dashed var(--line);
+}
+
+[data-theme="dark"] .ghost-button {
+  color: var(--muted);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .brand-button:hover,
@@ -216,6 +260,14 @@ button {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.84);
   color: var(--text);
+}
+
+[data-theme="dark"] .input,
+[data-theme="dark"] .search-input,
+[data-theme="dark"] .select-input {
+  background: var(--surface-strong);
+  color: var(--text);
+  border-color: var(--line);
 }
 
 .form-card {
@@ -329,17 +381,52 @@ button {
 }
 
 .chip {
-  padding: 10px 14px;
+  padding: 12px 16px;
   background: white;
   border: 1px solid var(--line);
   display: inline-flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+  justify-content: space-between;
+  min-width: 200px;
 }
 
-.chip span:last-child {
+[data-theme="dark"] .chip {
+  background: var(--surface-strong);
+  border-color: var(--line);
+}
+
+.chip div:first-child {
+  flex: 1;
+  text-align: left;
+}
+
+.chip-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.chip-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.star-mom-badge {
   color: var(--brand-strong);
   font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.remove-badge {
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .role-grid {
@@ -390,6 +477,11 @@ button {
   border: 1px solid var(--line);
 }
 
+[data-theme="dark"] .player-toggle {
+  background: var(--surface-strong);
+  border-color: var(--line);
+}
+
 .player-toggle.selected {
   background: var(--brand-soft);
   color: var(--brand-strong);
@@ -419,6 +511,54 @@ button {
 .filter-pill.active {
   background: var(--brand-soft);
   color: var(--brand-strong);
+}
+
+.role-tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.role-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.role-tab {
+  flex: 1;
+  min-width: 120px;
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+}
+
+.role-tab:hover {
+  color: var(--text);
+  background: rgba(15, 123, 108, 0.05);
+}
+
+.role-tab.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  background: rgba(15, 123, 108, 0.08);
+}
+
+.role-grid {
+  display: block;
+  gap: 0;
 }
 
 .message.success {
@@ -489,6 +629,12 @@ button {
   .role-grid,
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .role-tab {
+    min-width: 100px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
   }
 }
 
@@ -568,4 +714,237 @@ button {
 @keyframes submit-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cricket-field {
+  margin-top: 20px;
+  padding: 24px;
+  background: var(--surface);
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.player-slot {
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+[data-theme="dark"] .player-slot {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.player-slot:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--brand);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 123, 108, 0.15);
+}
+
+.player-slot.occupied {
+  background: var(--brand);
+  border-color: var(--brand-strong);
+  color: white;
+}
+
+.player-slot.occupied.star {
+  background: var(--gold);
+  border-color: #b8941f;
+  box-shadow: 0 8px 25px rgba(215, 164, 65, 0.3);
+}
+
+.player-slot.occupied.mom {
+  background: linear-gradient(135deg, var(--brand), var(--gold));
+  border-color: var(--brand-strong);
+  box-shadow: 0 8px 25px rgba(15, 123, 108, 0.25);
+}
+
+.player-name-field {
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.player-team-field {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  text-align: center;
+}
+
+[data-theme="dark"] .player-team-field {
+  opacity: 0.8;
+}
+
+.player-role-field {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin-top: 2px;
+  padding: 2px 8px;
+  background: rgba(15, 123, 108, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(15, 123, 108, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.player-badges {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  gap: 4px;
+}
+
+.badge-star, .badge-mom {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.badge-star {
+  background: var(--gold);
+  color: var(--text);
+}
+
+.badge-mom {
+  background: var(--brand);
+}
+
+.slot-remove {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: white;
+  border: 2px solid white;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+@media (min-width: 641px) {
+  .slot-remove {
+    opacity: 0;
+  }
+  
+  .player-slot:hover .slot-remove {
+    opacity: 1;
+  }
+}
+
+.field-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.legend-star {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.legend-mom {
+  background: var(--brand);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .cricket-field {
+    padding: 16px;
+    margin-top: 16px;
+  }
+  
+  .field-grid {
+    gap: 16px;
+    max-width: 100%;
+  }
+  
+  .player-slot {
+    min-height: 80px;
+    padding: 12px;
+  }
+  
+  .player-name-field {
+    font-size: 0.9rem;
+  }
+  
+  .player-team-field {
+    font-size: 0.75rem;
+  }
+  
+  .player-role-field {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+  }
+  
+  .field-legend {
+    gap: 16px;
+    font-size: 0.8rem;
+  }
 }

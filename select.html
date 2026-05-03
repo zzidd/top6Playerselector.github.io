@@ -76,9 +76,29 @@
             <p class="eyebrow">Chosen team</p>
             <p id="submit-helper" class="subtitle"></p>
           </div>
-          <button id="submit-selection" class="brand-button" type="button">Submit team</button>
+          <div class="header-actions">
+            <button id="theme-toggle" class="ghost-button" type="button" aria-label="Toggle dark mode">🌙</button>
+            <button id="submit-selection" class="brand-button" type="button">Submit team</button>
+          </div>
         </div>
-        <div id="selected-chip-row" class="chip-row"></div>
+        <div id="cricket-field" class="cricket-field">
+          <div class="field-grid">
+            <div class="player-slot slot-1" data-slot="1"></div>
+            <div class="player-slot slot-2" data-slot="2"></div>
+            <div class="player-slot slot-3" data-slot="3"></div>
+            <div class="player-slot slot-4" data-slot="4"></div>
+            <div class="player-slot slot-5" data-slot="5"></div>
+            <div class="player-slot slot-6" data-slot="6"></div>
+          </div>
+          <div class="field-legend">
+            <div class="legend-item">
+              <span class="legend-star">★</span> Star Player
+            </div>
+            <div class="legend-item">
+              <span class="legend-mom">M</span> Man of the Match
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="panel">
@@ -88,12 +108,11 @@
             <option value="all">All teams</option>
           </select>
         </div>
-        <div id="role-filters" class="role-filters" style="margin-top: 14px;">
-          <button class="filter-pill active" type="button" data-role-filter="all">All Roles</button>
-          <button class="filter-pill" type="button" data-role-filter="Batter">Batters</button>
-          <button class="filter-pill" type="button" data-role-filter="Bowler">Bowlers</button>
-          <button class="filter-pill" type="button" data-role-filter="All_Rounder">All Rounders</button>
-          <button class="filter-pill" type="button" data-role-filter="WK">Wicket Keepers</button>
+        <div id="role-tabs" class="role-tabs" style="margin-top: 14px;">
+          <button class="role-tab active" type="button" data-role-tab="Batter">Batters</button>
+          <button class="role-tab" type="button" data-role-tab="Bowler">Bowlers</button>
+          <button class="role-tab" type="button" data-role-tab="All_Rounder">All-rounders</button>
+          <button class="role-tab" type="button" data-role-tab="WK">Wicket-keepers</button>
         </div>
       </section>
 

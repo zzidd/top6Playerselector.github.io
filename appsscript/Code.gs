@@ -3,7 +3,7 @@ const SHEET_NAME = 'Selections';
 const LOCK_STATES = ['in progress', 'live', 'complete'];
 const MATCH_CACHE_KEY = 'matches_9241';
 const MATCH_BACKUP_KEY = 'matches_9241_backup';
-const MATCH_CACHE_TTL_SECONDS = 600;
+const MATCH_CACHE_TTL_SECONDS = 180;
 
 function doGet(e) {
   return handleRequest_(e, 'GET');

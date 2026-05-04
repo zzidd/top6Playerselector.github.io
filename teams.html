@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Other Teams | Top 6 Player Selector</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="teams-page">
+  <main class="page-shell">
+    <section class="hero-card">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Other Teams</p>
+          <h1 id="match-title">Loading match...</h1>
+          <p id="match-desc" class="subtitle">View teams submitted by other players</p>
+        </div>
+        <div class="user-card">
+          <div>
+            <p class="eyebrow">Playing as</p>
+            <strong id="current-user-name"></strong>
+          </div>
+          <div class="page-actions">
+            <button id="theme-toggle" class="ghost-button" type="button" aria-label="Toggle dark mode">🌙</button>
+            <a class="secondary-button" href="./select.html" id="back-to-selection">Back to selection</a>
+            <a class="ghost-button" href="./matches.html">All matches</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-badges">
+        <span id="match-state" class="status-pill">loading</span>
+        <span id="teams-count" class="meta-pill">0 teams submitted</span>
+      </div>
+    </section>
+
+    <div id="teams-message" class="message hidden"></div>
+
+    <div id="teams-root" class="section-stack">
+      <section class="users-list">
+        <h2 class="section-title">Submitted Teams</h2>
+        <div id="users-grid" class="users-grid">
+          <div class="empty-state">Loading teams...</div>
+        </div>
+      </section>
+
+      <section id="team-detail" class="team-detail hidden">
+        <div class="team-detail-header">
+          <h2 id="selected-user-name" class="selected-user-name"></h2>
+          <button id="back-to-users" class="secondary-button" type="button">← Back to all teams</button>
+        </div>
+        <div id="team-field" class="cricket-field">
+          <div class="field-grid">
+            <div class="player-slot slot-1" data-slot="1"></div>
+            <div class="player-slot slot-2" data-slot="2"></div>
+            <div class="player-slot slot-3" data-slot="3"></div>
+            <div class="player-slot slot-4" data-slot="4"></div>
+            <div class="player-slot slot-5" data-slot="5"></div>
+            <div class="player-slot slot-6" data-slot="6"></div>
+          </div>
+          <div class="field-legend">
+            <div class="legend-item">
+              <span class="legend-star">★</span> Star Player
+            </div>
+            <div class="legend-item">
+              <span class="legend-mom">M</span> Man of the Match
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="./theme.js?v=3"></script>
+  <script src="./config.js?v=3"></script>
+  <script src="./teams.js?v=3"></script>
+</body>
+</html>

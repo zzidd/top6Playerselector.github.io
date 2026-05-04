@@ -477,8 +477,7 @@
     const submitModalClose = $("submit-modal-close");
     const themeToggle = $("theme-toggle");
     const cricketField = $("cricket-field");
-    
-    let isDarkMode = false;
+    const viewOtherTeamsButton = $("view-other-teams");
 
     if (submitModalClose) {
       submitModalClose.addEventListener("click", closeSubmitModal);
@@ -532,6 +531,18 @@
         : canSubmit()
           ? "Ready to submit. A later submission replaces your earlier one until lock."
           : "Select exactly 6 players and choose both Star and MoM.";
+
+      // Show/hide "View other teams" button based on match state
+      if (viewOtherTeamsButton) {
+        const isMatchStarted = isLockedState(state.match?.state);
+        viewOtherTeamsButton.classList.toggle("hidden", !isMatchStarted);
+        if (isMatchStarted && hasAppsScript) {
+          viewOtherTeamsButton.disabled = false;
+        } else if (!hasAppsScript) {
+          viewOtherTeamsButton.disabled = true;
+          viewOtherTeamsButton.title = "Not available in local test mode";
+        }
+      }
     }
     
     
@@ -820,32 +831,16 @@
     });
     
     
-    // Initialize dark mode
-    function initDarkMode() {
-      const savedTheme = localStorage.getItem('top6_theme') || 'light';
-      isDarkMode = savedTheme === 'dark';
-      updateTheme();
+    
+    // Add view other teams button functionality
+    if (viewOtherTeamsButton) {
+      viewOtherTeamsButton.addEventListener("click", () => {
+        // Pass match data as URL parameter (like props)
+        const matchParam = encodeURIComponent(JSON.stringify(state.match));
+        const teamsUrl = `./teams.html?matchId=${encodeURIComponent(state.matchId)}&match=${matchParam}`;
+        window.location.href = teamsUrl;
+      });
     }
-    
-    function updateTheme() {
-      if (isDarkMode) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-label', 'Toggle light mode');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-label', 'Toggle dark mode');
-      }
-      localStorage.setItem('top6_theme', isDarkMode ? 'dark' : 'light');
-    }
-    
-    themeToggle.addEventListener("click", () => {
-      isDarkMode = !isDarkMode;
-      updateTheme();
-    });
-    
-    initDarkMode();
 
     // Add swipe gesture support for mobile
     let touchStartX = 0;

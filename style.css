@@ -948,3 +948,189 @@ button {
     font-size: 0.8rem;
   }
 }
+
+/* Teams Page Styles */
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.teams-page .user-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.teams-page .user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.user-meta {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.view-team-button {
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.view-team-button:hover {
+  background: var(--brand-strong);
+}
+
+.team-detail {
+  margin-top: 24px;
+}
+
+.team-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.selected-user-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.back-to-users {
+  background: transparent;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.back-to-users:hover {
+  background: var(--brand);
+  color: white;
+}
+
+.section-title {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.teams-page .cricket-field {
+  margin-top: 24px;
+}
+
+.teams-page .player-slot {
+  cursor: default;
+}
+
+.teams-page .player-slot:hover {
+  transform: none;
+}
+
+/* Universal theme toggle positioning */
+.hero-top {
+  position: relative;
+}
+
+.hero-top .ghost-button#theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.hero-top .ghost-button#theme-toggle:hover {
+  background: var(--surface);
+  border-color: var(--brand);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .hero-top .ghost-button#theme-toggle {
+  background: transparent;
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .hero-top .ghost-button#theme-toggle:hover {
+  background: var(--surface-strong);
+  border-color: var(--brand);
+}
+
+@media (max-width: 640px) {
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .team-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .hero-top .ghost-button#theme-toggle {
+    position: static;
+    margin-top: 12px;
+    align-self: flex-end;
+  }
+  
+  .hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

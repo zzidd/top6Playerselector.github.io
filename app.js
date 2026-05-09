@@ -412,6 +412,18 @@
         });
       }
 
+      // Re-sort filtered matches to maintain correct order
+      filtered.sort((a, b) => {
+        const aLocked = isLockedState(a.state) ? 1 : 0;
+        const bLocked = isLockedState(b.state) ? 1 : 0;
+        if (aLocked !== bLocked) return aLocked - bLocked;
+        // Only for locked/completed matches, show latest first (highest matchId)
+        // For all other matches, keep ascending order (oldest first)
+        return aLocked === 1 && bLocked === 1 ? 
+          Number(b.matchId) - Number(a.matchId) : 
+          Number(a.matchId) - Number(b.matchId);
+      });
+
       render(filtered);
     }
 
@@ -429,7 +441,11 @@
         const aLocked = isLockedState(a.state) ? 1 : 0;
         const bLocked = isLockedState(b.state) ? 1 : 0;
         if (aLocked !== bLocked) return aLocked - bLocked;
-        return Number(a.matchId) - Number(b.matchId);
+        // Only for locked/completed matches, show latest first (highest matchId)
+        // For all other matches, keep ascending order (oldest first)
+        return aLocked === 1 && bLocked === 1 ? 
+          Number(b.matchId) - Number(a.matchId) : 
+          Number(a.matchId) - Number(b.matchId);
       });
       applyFilters();
     } catch (error) {

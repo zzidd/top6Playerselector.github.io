@@ -1,12 +1,13 @@
 (function () {
   const config = window.TOP6_CONFIG || {
     appsScriptUrl: "",
-    lockStates: ["in progress", "live", "complete"],
+    openStates: ["upcoming", "preview", "toss"],
     storageKeys: {
       userName: "top6_playerselector_user_name",
       lastSubmissionPrefix: "top6_playerselector_submission_"
     }
   };
+  const openStates = config.openStates || ["upcoming", "preview", "toss"];
 
   const ROLE_ORDER = ["Batter", "Bowler", "All_Rounder", "WK"];
   const hasAppsScript = Boolean((config.appsScriptUrl || "").trim());
@@ -108,10 +109,8 @@
   }
 
   function getStatusClass(state) {
-    const value = String(state || "").toLowerCase();
-    if (config.lockStates.includes(value)) return "locked";
-    if (["preview", "upcoming", "toss", "toss soon", "toss in progress"].includes(value)) return "upcoming";
-    return "live";
+    const value = String(state || "").trim().toLowerCase();
+    return openStates.includes(value) ? "upcoming" : "locked";
   }
 
   function escapeHtml(value) {

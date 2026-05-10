@@ -1,12 +1,13 @@
 (function () {
   const config = window.TOP6_CONFIG || {
     appsScriptUrl: "",
-    lockStates: ["in progress", "live", "complete"],
+    openStates: ["upcoming", "preview", "toss"],
     storageKeys: {
       userName: "top6_playerselector_user_name",
       lastSubmissionPrefix: "top6_playerselector_submission_"
     }
   };
+  const openStates = config.openStates || ["upcoming", "preview", "toss"];
 
   const MAX_PLAYERS = 6;
   const RULES = {
@@ -228,14 +229,11 @@
   }
 
   function getStatusClass(state) {
-    const value = String(state || "").toLowerCase();
-    if (config.lockStates.includes(value)) return "locked";
-    if (["preview", "upcoming", "toss", "toss soon", "toss in progress"].includes(value)) return "upcoming";
-    return "live";
+    return isLockedState(state) ? "locked" : "upcoming";
   }
 
   function isLockedState(state) {
-    return config.lockStates.includes(String(state || "").trim().toLowerCase());
+    return !openStates.includes(String(state || "").trim().toLowerCase());
   }
 
   function groupByRole(players) {
@@ -543,7 +541,7 @@
 
       submitButton.disabled = state.locked || !canSubmit();
       $("submit-helper").textContent = state.locked
-        ? "The match has already started, so resubmission is disabled."
+        ? "This match is not open for selection, so resubmission is disabled."
         : canSubmit()
           ? "Ready to submit. A later submission replaces your earlier one until lock."
           : "Select exactly 6 players and choose both Star and MoM.";

@@ -1,6 +1,6 @@
 const SERIES_MATCHES_URL = 'https://www.cricbuzz.com/cricket-series/9241/indian-premier-league-2026/matches';
 const SHEET_NAME = 'Selections';
-const LOCK_STATES = ['in progress', 'live', 'complete'];
+const OPEN_SELECTION_STATES = ['upcoming', 'preview', 'toss'];
 const MATCH_CACHE_KEY = 'matches_9241';
 const MATCH_BACKUP_KEY = 'matches_9241_backup';
 const MATCH_CACHE_TTL_SECONDS = 180;
@@ -265,8 +265,8 @@ function submitSelection_(payload) {
     throw new Error('Match was not found in Cricbuzz live data.');
   }
 
-  if (LOCK_STATES.indexOf(String(liveMatch.state || '').toLowerCase()) !== -1) {
-    throw new Error('This match is already locked.');
+  if (OPEN_SELECTION_STATES.indexOf(String(liveMatch.state || '').trim().toLowerCase()) === -1) {
+    throw new Error('This match is locked because it is not open for selection.');
   }
 
   const normalizedName = normalizeName_(payload.name);

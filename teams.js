@@ -108,9 +108,15 @@
     return parseJsonSafe(response);
   }
 
-  function getStatusClass(state) {
+  function isOpenSelectionState(state, status) {
     const value = String(state || "").trim().toLowerCase();
-    return openStates.includes(value) ? "upcoming" : "locked";
+    const statusValue = String(status || "").trim().toLowerCase();
+    return openStates.includes(value)
+      || (value === "delay" && statusValue.includes("toss delayed"));
+  }
+
+  function getStatusClass(state, status) {
+    return isOpenSelectionState(state, status) ? "upcoming" : "locked";
   }
 
   function escapeHtml(value) {
@@ -332,7 +338,7 @@
       $("match-title").textContent = `${match.team1} vs ${match.team2}`;
       $("match-desc").textContent = match.matchDesc || "IPL Match";
       $("match-state").textContent = match.state || "unknown";
-      $("match-state").className = `status-pill ${getStatusClass(match.state)}`;
+      $("match-state").className = `status-pill ${getStatusClass(match.state, match.status)}`;
       
       // Update teams count
       const teamsCount = matchData.users.length;

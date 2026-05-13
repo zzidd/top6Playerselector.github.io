@@ -253,6 +253,13 @@ function validateSelection_(payload) {
   if (counts.WK < 1 || counts.WK > 3) throw new Error('Wicket Keepers must be between 1 and 3.');
 }
 
+function isOpenSelectionState_(match) {
+  const state = String((match && match.state) || '').trim().toLowerCase();
+  const status = String((match && match.status) || '').trim().toLowerCase();
+  return OPEN_SELECTION_STATES.indexOf(state) !== -1
+    || (state === 'delay' && status.indexOf('toss delayed') !== -1);
+}
+
 function submitSelection_(payload) {
   validateSelection_(payload);
 
@@ -265,7 +272,7 @@ function submitSelection_(payload) {
     throw new Error('Match was not found in Cricbuzz live data.');
   }
 
-  if (OPEN_SELECTION_STATES.indexOf(String(liveMatch.state || '').trim().toLowerCase()) === -1) {
+  if (!isOpenSelectionState_(liveMatch)) {
     throw new Error('This match is locked because it is not open for selection.');
   }
 

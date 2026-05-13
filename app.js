@@ -228,12 +228,19 @@
     return parseJsonSafe(response);
   }
 
-  function getStatusClass(state) {
-    return isLockedState(state) ? "locked" : "upcoming";
+  function getStatusClass(state, status) {
+    return isLockedState(state, status) ? "locked" : "upcoming";
   }
 
-  function isLockedState(state) {
-    return !openStates.includes(String(state || "").trim().toLowerCase());
+  function isOpenSelectionState(state, status) {
+    const stateValue = String(state || "").trim().toLowerCase();
+    const statusValue = String(status || "").trim().toLowerCase();
+    return openStates.includes(stateValue)
+      || (stateValue === "delay" && statusValue.includes("toss delayed"));
+  }
+
+  function isLockedState(state, status) {
+    return !isOpenSelectionState(state, status);
   }
 
   function groupByRole(players) {
@@ -363,7 +370,7 @@
       }
 
       listNode.innerHTML = items.map((match) => {
-        const stateClass = getStatusClass(match.state);
+        const stateClass = getStatusClass(match.state, match.status);
         const params = new URLSearchParams({ matchId: match.matchId });
         return `
           <article class="match-card">
@@ -404,16 +411,16 @@
       if (filter !== "all") {
         filtered = filtered.filter((match) => {
           const state = String(match.state || "").toLowerCase();
-          if (filter === "locked") return isLockedState(state);
-          if (filter === "upcoming") return !isLockedState(state);
+          if (filter === "locked") return isLockedState(match.state, match.status);
+          if (filter === "upcoming") return !isLockedState(match.state, match.status);
           return state === filter;
         });
       }
 
       // Re-sort filtered matches to maintain correct order
       filtered.sort((a, b) => {
-        const aLocked = isLockedState(a.state) ? 1 : 0;
-        const bLocked = isLockedState(b.state) ? 1 : 0;
+        const aLocked = isLockedState(a.state, a.status) ? 1 : 0;
+        const bLocked = isLockedState(b.state, b.status) ? 1 : 0;
         if (aLocked !== bLocked) return aLocked - bLocked;
         // Only for locked/completed matches, show latest first (highest matchId)
         // For all other matches, keep ascending order (oldest first)
@@ -436,8 +443,8 @@
       }
       matches = await fetchMatches();
       matches.sort((a, b) => {
-        const aLocked = isLockedState(a.state) ? 1 : 0;
-        const bLocked = isLockedState(b.state) ? 1 : 0;
+        const aLocked = isLockedState(a.state, a.status) ? 1 : 0;
+        const bLocked = isLockedState(b.state, b.status) ? 1 : 0;
         if (aLocked !== bLocked) return aLocked - bLocked;
         // Only for locked/completed matches, show latest first (highest matchId)
         // For all other matches, keep ascending order (oldest first)
@@ -517,7 +524,7 @@
     }
 
     function syncLockState() {
-      state.locked = isLockedState(state.match?.state);
+      state.locked = isLockedState(state.match?.state, state.match?.status);
       lockBanner.classList.toggle("hidden", !state.locked);
       if (state.locked) {
         lockText.textContent = `This match is ${state.match.state}. Editing is locked, but your saved team is still visible.`;
@@ -528,7 +535,7 @@
       $("match-title").textContent = `${state.match.team1} vs ${state.match.team2}`;
       $("match-desc").textContent = state.match.matchDesc || "IPL Match";
       $("match-state").textContent = state.match.state || "unknown";
-      $("match-state").className = `status-pill ${getStatusClass(state.match.state)}`;
+      $("match-state").className = `status-pill ${getStatusClass(state.match.state, state.match.status)}`;
       $("selection-count").textContent = `${state.selected.length} / ${MAX_PLAYERS}`;
 
       const composition = getTeamComposition(state.selected);
@@ -548,7 +555,7 @@
 
       // Show/hide "View other teams" button based on match state
       if (viewOtherTeamsButton) {
-        const isMatchStarted = isLockedState(state.match?.state);
+        const isMatchStarted = isLockedState(state.match?.state, state.match?.status);
         viewOtherTeamsButton.classList.toggle("hidden", !isMatchStarted);
         if (isMatchStarted && hasAppsScript) {
           viewOtherTeamsButton.disabled = false;
